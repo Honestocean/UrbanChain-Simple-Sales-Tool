@@ -1,7 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { Sale } from '../repository/Entity/sale.entity';
+import { SaleStatus } from '../sale-status.enum';
 import { SalesService } from '../service/sales.service';
-import { createSaleDto } from '../test-sales-data';
+import { createSaleDto, updateSaleDto } from '../test-sales-data';
 import { SalesController } from './sales.controller';
 
 const mockSalesService = () => ({
@@ -71,5 +72,29 @@ describe('SalesController', () => {
 
     expect(service.createSale).toHaveBeenCalledWith(createSaleDto);
     expect(result).toEqual(expectedResult);
+  });
+
+  it('PATCH SUCCESS updateSale should return an update sale on succesful update', async () => {
+    const expectedResult: Sale = {
+      id: '1',
+      createdDate: new Date().toUTCString(),
+      ...createSaleDto,
+    };
+
+    service.updateSale = jest.fn().mockResolvedValue(expectedResult);
+
+    const result = await controller.updateSale('1', updateSaleDto);
+
+    expect(service.updateSale).toHaveBeenCalledWith('1', SaleStatus.COMPLETED);
+    expect(result).toEqual(expectedResult);
+  });
+
+  it('DELETE SUCCESS deleteSale should delete a sale', async () => {
+    service.deleteSale = jest.fn().mockResolvedValue(undefined);
+
+    const result = await controller.deleteSale('1');
+
+    expect(service.deleteSale).toHaveBeenCalledWith('1');
+    expect(result).toBeUndefined();
   });
 });

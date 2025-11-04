@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { Sale } from '../repository/Entity/sale.entity';
 import { SalesRepository } from '../repository/sales.repository';
+import { SaleStatus } from '../sale-status.enum';
 import { createSaleDto } from '../test-sales-data';
 import { SalesService } from './sales.service';
 
@@ -85,5 +86,47 @@ describe('SalesService', () => {
 
     expect(repository.createSale).toHaveBeenCalledWith(createSaleDto);
     expect(result).toEqual(expectedResult);
+  });
+
+  it('PATCH SUCCESS updateSale should return an update sale on succesful update', async () => {
+    const mockSale: Sale = {
+      id: '1',
+      createdDate: new Date().toUTCString(),
+      ...createSaleDto,
+      status: 'PENDING' as SaleStatus,
+    };
+
+    const updatedSale = { ...mockSale, status: 'COMPLETED' as SaleStatus };
+
+    (repository.findOne as jest.Mock).mockResolvedValue(mockSale);
+    (repository.save as jest.Mock) = jest.fn().mockResolvedValue(updatedSale);
+
+    const result = await service.updateSale('1', 'COMPLETED' as SaleStatus);
+
+    expect(repository.findOne).toHaveBeenCalledWith({ where: { id: '1' } });
+    expect(repository.save).toHaveBeenCalledWith(updatedSale);
+    expect(result.status).toEqual('COMPLETED');
+  });
+
+  it('DELETE SUCCESS deleteSale should delete a sale', async () => {
+    (repository.delete as jest.Mock) = jest
+      .fn()
+      .mockResolvedValue({ affected: 1 });
+
+    await service.deleteSale('1');
+
+    expect(repository.delete).toHaveBeenCalledWith({ id: '1' });
+  });
+
+  it('DELETE FAILURE deleteSale should throw a not found exception if no sale with that ID is found', async () => {
+    (repository.delete as jest.Mock) = jest
+      .fn()
+      .mockResolvedValue({ affected: 0 });
+
+    await expect(service.deleteSale('1')).rejects.toThrow(
+      'Task with ID 1 not found',
+    );
+
+    expect(repository.delete).toHaveBeenCalledWith({ id: '1' });
   });
 });

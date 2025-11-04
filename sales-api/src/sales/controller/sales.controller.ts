@@ -1,7 +1,17 @@
-import { Body, Controller, Get, Param, ParseUUIDPipe, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { Sale } from '../repository/Entity/sale.entity';
 import { SalesService } from '../service/sales.service';
 import { CreateSaleDto } from './dto/create-sale.dto';
+import { UpdateSaleDto } from './dto/update-sale.dto';
 
 @Controller('sales')
 export class SalesController {
@@ -19,5 +29,19 @@ export class SalesController {
   @Post()
   async createSale(@Body() createSaleDto: CreateSaleDto): Promise<Sale> {
     return this.salesService.createSale(createSaleDto);
+  }
+
+  @Patch('/:id')
+  async updateSale(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateSaleDto: UpdateSaleDto,
+  ): Promise<Sale> {
+    const { status } = updateSaleDto;
+    return await this.salesService.updateSale(id, status);
+  }
+
+  @Delete('/:id')
+  async deleteSale(@Param('id', ParseUUIDPipe) id: string): Promise<void> {
+    return await this.salesService.deleteSale(id);
   }
 }

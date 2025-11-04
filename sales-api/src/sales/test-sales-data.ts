@@ -1,4 +1,5 @@
 import { CreateSaleDto } from './controller/dto/create-sale.dto';
+import { UpdateSaleDto } from './controller/dto/update-sale.dto';
 import { SaleStatus } from './sale-status.enum';
 
 export const createSaleDto: CreateSaleDto = {
@@ -9,4 +10,8 @@ export const createSaleDto: CreateSaleDto = {
   contractStartDate: '2024-01-01',
   contractEndDate: '2025-01-01',
   status: SaleStatus.ACTIVE,
+};
+
+export const updateSaleDto: UpdateSaleDto = {
+  status: SaleStatus.COMPLETED,
 };

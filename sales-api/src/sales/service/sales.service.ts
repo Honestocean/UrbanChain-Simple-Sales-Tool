@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateSaleDto } from '../controller/dto/create-sale.dto';
 import { Sale } from '../repository/Entity/sale.entity';
 import { SalesRepository } from '../repository/sales.repository';
+import { SaleStatus } from '../sale-status.enum';
 
 @Injectable()
 export class SalesService {
@@ -21,5 +22,21 @@ export class SalesService {
 
   async createSale(salesDto: CreateSaleDto): Promise<Sale> {
     return this.salesRepository.createSale(salesDto);
+  }
+
+  async updateSale(id: string, status: SaleStatus): Promise<Sale> {
+    const sale = await this.getSaleById(id);
+
+    sale.status = status;
+
+    await this.salesRepository.save(sale);
+    return sale;
+  }
+
+  async deleteSale(id: string): Promise<void> {
+    const result = await this.salesRepository.delete({ id });
+
+    if (result.affected === 0)
+      throw new NotFoundException(`Task with ID ${id} not found`);
   }
 }

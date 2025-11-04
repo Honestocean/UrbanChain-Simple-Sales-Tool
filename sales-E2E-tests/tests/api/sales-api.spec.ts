@@ -3,7 +3,6 @@ import { CreateSaleDtoType } from "./sales-types";
 
 const API_BASE_URL = "http://localhost:3000";
 
-// Helper function to generate a random UUID for testing
 function generateTestUUID(): string {
   return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
     /[xy]/g,
@@ -385,9 +384,359 @@ test.describe("Sales API GET get sale by ID", () => {
       `${API_BASE_URL}/sales/${invalidId}`
     );
 
+    expect(response.status()).toBe(400);
+
+    const responseBody = await response.json();
+    expect(responseBody).toHaveProperty("message");
+  });
+});
+
+test.describe("Sales API PATCH update sale by ID", () => {
+  test("PATCH SUCCESS 200 /sales/:id - should update sale status", async ({
+    request,
+  }) => {
+    const saleData: CreateSaleDtoType = {
+      name: "Sale to Update",
+      customerName: "Update Customer",
+      email: "update@example.com",
+      mpans: ["4444444444444"],
+      contractStartDate: "2025-01-01",
+      contractEndDate: "2026-01-01",
+      status: "active",
+    };
+
+    const createResponse = await request.post(
+      `${API_BASE_URL}/sales`,
+      {
+        data: saleData,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    expect(createResponse.status()).toBe(201);
+    const createdSale = await createResponse.json();
+    const saleId = createdSale.id;
+
+    const updateData = {
+      status: "inactive",
+    };
+
+    const response = await request.patch(
+      `${API_BASE_URL}/sales/${saleId}`,
+      {
+        data: updateData,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    expect(response.status()).toBe(200);
+
+    const responseBody = await response.json();
+    expect(responseBody.id).toBe(saleId);
+    expect(responseBody.status).toBe("inactive");
+    expect(responseBody.name).toBe(saleData.name);
+    expect(responseBody.customerName).toBe(
+      saleData.customerName
+    );
+  });
+
+  test("PATCH SUCCESS 200 /sales/:id - should update to cancelled status", async ({
+    request,
+  }) => {
+    const saleData: CreateSaleDtoType = {
+      name: "Sale to Cancel",
+      customerName: "Cancel Customer",
+      email: "cancel@example.com",
+      mpans: ["5555555555555"],
+      contractStartDate: "2025-01-01",
+      contractEndDate: "2026-01-01",
+      status: "active",
+    };
+
+    const createResponse = await request.post(
+      `${API_BASE_URL}/sales`,
+      {
+        data: saleData,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const createdSale = await createResponse.json();
+    const saleId = createdSale.id;
+
+    const updateData = {
+      status: "cancelled",
+    };
+
+    const response = await request.patch(
+      `${API_BASE_URL}/sales/${saleId}`,
+      {
+        data: updateData,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    expect(response.status()).toBe(200);
+
+    const responseBody = await response.json();
+    expect(responseBody.status).toBe("cancelled");
+  });
+
+  test("PATCH FAILURE 404 /sales/:id - should return 404 for non-existent sale", async ({
+    request,
+  }) => {
+    const nonExistentId = generateTestUUID();
+
+    const updateData = {
+      status: "inactive",
+    };
+
+    const response = await request.patch(
+      `${API_BASE_URL}/sales/${nonExistentId}`,
+      {
+        data: updateData,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
     expect(response.status()).toBe(404);
 
     const responseBody = await response.json();
+    expect(responseBody).toHaveProperty("message");
+  });
+
+  test("PATCH FAILURE 400 /sales/:id - should return 400 for invalid UUID", async ({
+    request,
+  }) => {
+    const invalidId = "invalid-uuid";
+
+    const updateData = {
+      status: "inactive",
+    };
+
+    const response = await request.patch(
+      `${API_BASE_URL}/sales/${invalidId}`,
+      {
+        data: updateData,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    expect(response.status()).toBe(400);
+
+    const responseBody = await response.json();
+    expect(responseBody).toHaveProperty("message");
+  });
+
+  test("PATCH FAILURE 400 /sales/:id - should return 400 for invalid status value", async ({
+    request,
+  }) => {
+    // Create a sale first
+    const saleData: CreateSaleDtoType = {
+      name: "Sale for Invalid Update",
+      customerName: "Invalid Update Customer",
+      email: "invalid-update@example.com",
+      mpans: ["6666666666666"],
+      contractStartDate: "2025-01-01",
+      contractEndDate: "2026-01-01",
+      status: "active",
+    };
+
+    const createResponse = await request.post(
+      `${API_BASE_URL}/sales`,
+      {
+        data: saleData,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const createdSale = await createResponse.json();
+    const saleId = createdSale.id;
+
+    // Try to update with invalid status
+    const updateData = {
+      status: "invalid-status-value",
+    };
+
+    const response = await request.patch(
+      `${API_BASE_URL}/sales/${saleId}`,
+      {
+        data: updateData,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    expect(response.status()).toBe(400);
+
+    const responseBody = await response.json();
+    expect(responseBody).toHaveProperty("message");
+  });
+});
+
+test.describe("Sales API DELETE remove sale by ID", () => {
+  test("DELETE SUCCESS 200 /sales/:id - should delete a sale", async ({
+    request,
+  }) => {
+    const saleData: CreateSaleDtoType = {
+      name: "Sale to Delete",
+      customerName: "Delete Customer",
+      email: "delete@example.com",
+      mpans: ["7777777777777"],
+      contractStartDate: "2025-01-01",
+      contractEndDate: "2026-01-01",
+      status: "active",
+    };
+
+    const createResponse = await request.post(
+      `${API_BASE_URL}/sales`,
+      {
+        data: saleData,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    expect(createResponse.status()).toBe(201);
+    const createdSale = await createResponse.json();
+    const saleId = createdSale.id;
+
+    // Delete the sale
+    const response = await request.delete(
+      `${API_BASE_URL}/sales/${saleId}`
+    );
+
+    expect(response.status()).toBe(200);
+
+    // Verify the sale is deleted by trying to get it
+    const getResponse = await request.get(
+      `${API_BASE_URL}/sales/${saleId}`
+    );
+
+    expect(getResponse.status()).toBe(404);
+  });
+
+  test("DELETE SUCCESS 200 /sales/:id - should return success for valid deletion", async ({
+    request,
+  }) => {
+    const saleData: CreateSaleDtoType = {
+      name: "Another Sale to Delete",
+      customerName: "Another Delete Customer",
+      email: "another-delete@example.com",
+      mpans: ["8888888888888"],
+      contractStartDate: "2025-01-01",
+      contractEndDate: "2026-01-01",
+      status: "active",
+    };
+
+    const createResponse = await request.post(
+      `${API_BASE_URL}/sales`,
+      {
+        data: saleData,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const createdSale = await createResponse.json();
+    const saleId = createdSale.id;
+
+    // Delete the sale
+    const response = await request.delete(
+      `${API_BASE_URL}/sales/${saleId}`
+    );
+
+    expect(response.status()).toBe(200);
+  });
+
+  test("DELETE FAILURE 404 /sales/:id - should return 404 for non-existent sale", async ({
+    request,
+  }) => {
+    const nonExistentId = generateTestUUID();
+
+    const response = await request.delete(
+      `${API_BASE_URL}/sales/${nonExistentId}`
+    );
+
+    expect(response.status()).toBe(404);
+
+    const responseBody = await response.json();
+    expect(responseBody).toHaveProperty("message");
+    expect(responseBody.message).toContain("not found");
+  });
+
+  test("DELETE FAILURE 400 /sales/:id - should return 400 for invalid UUID", async ({
+    request,
+  }) => {
+    const invalidId = "invalid-uuid-format";
+
+    const response = await request.delete(
+      `${API_BASE_URL}/sales/${invalidId}`
+    );
+
+    expect(response.status()).toBe(400);
+
+    const responseBody = await response.json();
+    expect(responseBody).toHaveProperty("message");
+    expect(responseBody.message).toContain("uuid");
+  });
+
+  test("DELETE FAILURE - should not allow deleting the same sale twice", async ({
+    request,
+  }) => {
+    const saleData: CreateSaleDtoType = {
+      name: "Sale for Double Delete Test",
+      customerName: "Double Delete Customer",
+      email: "double-delete@example.com",
+      mpans: ["9999999999999"],
+      contractStartDate: "2025-01-01",
+      contractEndDate: "2026-01-01",
+      status: "active",
+    };
+
+    const createResponse = await request.post(
+      `${API_BASE_URL}/sales`,
+      {
+        data: saleData,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const createdSale = await createResponse.json();
+    const saleId = createdSale.id;
+
+    const firstDeleteResponse = await request.delete(
+      `${API_BASE_URL}/sales/${saleId}`
+    );
+
+    expect(firstDeleteResponse.status()).toBe(200);
+
+    const secondDeleteResponse = await request.delete(
+      `${API_BASE_URL}/sales/${saleId}`
+    );
+
+    expect(secondDeleteResponse.status()).toBe(404);
+
+    const responseBody = await secondDeleteResponse.json();
     expect(responseBody).toHaveProperty("message");
   });
 });
