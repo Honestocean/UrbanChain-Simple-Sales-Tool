@@ -1,0 +1,11 @@
+{
+  "id": "rec-001",
+  "name": "Energy Supply Account",
+  "customerName": "Alice Johnson",
+  "email": "alice.johnson@example.com",
+  "mpans": ["1234567890123", "9876543210987"],
+  "createdDate": "2025-10-29T09:45:00Z",
+  "contractStartDate": "2025-01-01",
+  "contractEndDate": "2026-01-01",
+  "status": "active"
+}
