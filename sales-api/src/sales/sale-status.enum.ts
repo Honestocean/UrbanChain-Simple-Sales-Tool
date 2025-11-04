@@ -1,6 +1,6 @@
 export enum SaleStatus {
-  ACTIVE = 'ACTIVE',
-  INACTIVE = 'INACTIVE',
-  COMPLETED = 'COMPLETED',
-  CANCELLED = 'CANCELLED',
+  ACTIVE = 'active',
+  INACTIVE = 'inactive',
+  COMPLETED = 'completed',
+  CANCELLED = 'cancelled',
 }
