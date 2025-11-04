@@ -1,4 +1,5 @@
-import { IsDateString, IsEmail, IsIn, IsNotEmpty } from 'class-validator';
+import { IsDateString, IsEmail, IsNotEmpty } from 'class-validator';
+import { SaleStatus } from 'src/sales/sale-status.enum';
 
 export class CreateSaleDto {
   @IsNotEmpty()
@@ -23,6 +24,5 @@ export class CreateSaleDto {
   contractEndDate: string;
 
   @IsNotEmpty()
-  @IsIn(['active', 'inactive', 'pending', 'cancelled'])
-  status: string;
+  status: SaleStatus;
 }

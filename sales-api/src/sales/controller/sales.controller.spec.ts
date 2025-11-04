@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { SaleStatus } from '../sale-status.enum';
 import { SalesService } from '../service/sales.service';
 import { CreateSaleDto } from './dto/create-sale.dto';
 import { SalesController } from './sales.controller';
@@ -14,7 +15,7 @@ const createSaleDto: CreateSaleDto = {
   mpans: ['1234567890122', '9876543210987'],
   contractStartDate: '2024-01-01',
   contractEndDate: '2025-01-01',
-  status: 'active',
+  status: SaleStatus.ACTIVE,
 };
 
 describe('SalesController', () => {
