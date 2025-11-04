@@ -7,7 +7,11 @@ import { SalesRepository } from '../repository/sales.repository';
 export class SalesService {
   constructor(private salesRepository: SalesRepository) {}
 
+  async getSales(): Promise<Sale[]> {
+    return this.salesRepository.find();
+  }
+
   async createSale(salesDto: CreateSaleDto): Promise<Sale> {
-    return this.salesRepository.CreateSale(salesDto);
+    return this.salesRepository.createSale(salesDto);
   }
 }

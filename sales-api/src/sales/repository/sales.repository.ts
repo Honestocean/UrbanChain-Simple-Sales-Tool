@@ -10,7 +10,7 @@ export class SalesRepository extends Repository<Sale> {
     super(Sale, dataSource.createEntityManager());
   }
 
-  async CreateSale(createSaleDto: CreateSaleDto): Promise<Sale> {
+  async createSale(createSaleDto: CreateSaleDto): Promise<Sale> {
     const sale = this.create({ ...createSaleDto });
 
     await this.save(sale);

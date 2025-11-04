@@ -5,7 +5,8 @@ import { createSaleDto } from '../test-sales-data';
 import { SalesService } from './sales.service';
 
 const mockSalesRepository = () => ({
-  CreateSale: jest.fn(),
+  createSale: jest.fn(),
+  find: jest.fn(),
 });
 
 describe('SalesService', () => {
@@ -28,6 +29,23 @@ describe('SalesService', () => {
     expect(service).toBeDefined();
   });
 
+  it('GET SUCCESS getSales should return all sales', async () => {
+    const expectedResult: Sale[] = [
+      {
+        id: '1',
+        createdDate: new Date().toUTCString(),
+        ...createSaleDto,
+      },
+    ];
+
+    (repository.find as jest.Mock).mockResolvedValue(expectedResult);
+
+    const result = await service.getSales();
+
+    expect(repository.find).toHaveBeenCalled();
+    expect(result).toEqual(expectedResult);
+  });
+
   it('POST SUCCESS CreateSale should return a sale', async () => {
     const expectedResult: Sale = {
       id: '1',
@@ -35,11 +53,11 @@ describe('SalesService', () => {
       ...createSaleDto,
     };
 
-    (repository.CreateSale as jest.Mock).mockResolvedValue(expectedResult);
+    (repository.createSale as jest.Mock).mockResolvedValue(expectedResult);
 
     const result = await service.createSale(createSaleDto);
 
-    expect(repository.CreateSale).toHaveBeenCalledWith(createSaleDto);
+    expect(repository.createSale).toHaveBeenCalledWith(createSaleDto);
     expect(result).toEqual(expectedResult);
   });
 });

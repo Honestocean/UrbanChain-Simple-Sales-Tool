@@ -43,7 +43,7 @@ describe('SalesRepository', () => {
     jest.spyOn(repository, 'create').mockReturnValue(expectedResult as any);
     jest.spyOn(repository, 'save').mockResolvedValue(expectedResult as any);
 
-    const result = await repository.CreateSale(createSaleDto);
+    const result = await repository.createSale(createSaleDto);
 
     expect(repository.create).toHaveBeenCalledWith({ ...createSaleDto });
     expect(repository.save).toHaveBeenCalledWith(expectedResult);
