@@ -1,5 +1,5 @@
 import { IsDateString, IsEmail, IsEnum, IsNotEmpty } from 'class-validator';
-import { SaleStatus } from 'src/sales/sale-status.enum';
+import { SaleStatus } from '../../sale-status.enum';
 
 export class CreateSaleDto {
   @IsNotEmpty()

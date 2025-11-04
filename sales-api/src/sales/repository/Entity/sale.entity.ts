@@ -1,5 +1,5 @@
-import { SaleStatus } from 'src/sales/sale-status.enum';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { SaleStatus } from '../../sale-status.enum';
 
 @Entity()
 export class Sale {

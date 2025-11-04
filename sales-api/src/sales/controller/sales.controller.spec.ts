@@ -1,22 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { SaleStatus } from '../sale-status.enum';
+import { Sale } from '../repository/Entity/sale.entity';
 import { SalesService } from '../service/sales.service';
-import { CreateSaleDto } from './dto/create-sale.dto';
+import { createSaleDto } from '../test-sales-data';
 import { SalesController } from './sales.controller';
 
 const mockSalesService = () => ({
   createSale: jest.fn(),
 });
-
-const createSaleDto: CreateSaleDto = {
-  name: 'Energy Supply Account',
-  customerName: 'Alice Johnson',
-  email: 'alice.johnson@example.com',
-  mpans: ['1234567890122', '9876543210987'],
-  contractStartDate: '2024-01-01',
-  contractEndDate: '2025-01-01',
-  status: SaleStatus.ACTIVE,
-};
 
 describe('SalesController', () => {
   let controller: SalesController;
@@ -37,7 +27,11 @@ describe('SalesController', () => {
   });
 
   it('POST SUCCESS CreateSale should return a sale', async () => {
-    const expectedResult = { id: '1', ...createSaleDto };
+    const expectedResult: Sale = {
+      id: '1',
+      createdDate: new Date().toUTCString(),
+      ...createSaleDto,
+    };
 
     (service.createSale as jest.Mock).mockResolvedValue(expectedResult);
 
