@@ -7,3 +7,9 @@ export interface CreateSaleDtoType {
   contractEndDate: string;
   status: string;
 }
+
+export interface SaleResponseData
+  extends CreateSaleDtoType {
+  id: string;
+  createdOn: string;
+}

@@ -7,6 +7,7 @@ import { SalesService } from './sales.service';
 const mockSalesRepository = () => ({
   createSale: jest.fn(),
   find: jest.fn(),
+  findOne: jest.fn(),
 });
 
 describe('SalesService', () => {
@@ -44,6 +45,31 @@ describe('SalesService', () => {
 
     expect(repository.find).toHaveBeenCalled();
     expect(result).toEqual(expectedResult);
+  });
+
+  it('GET SUCCESS getSaleById should return a sale', async () => {
+    const expectedResult: Sale = {
+      id: '1',
+      createdDate: new Date().toUTCString(),
+      ...createSaleDto,
+    };
+
+    (repository.findOne as jest.Mock).mockResolvedValue(expectedResult);
+
+    const result = await service.getSaleById('1');
+
+    expect(repository.findOne).toHaveBeenCalledWith({ where: { id: '1' } });
+    expect(result).toEqual(expectedResult);
+  });
+
+  it('GET FAILURE getSaleById should throw a not found acception if no sale with that ID is found', async () => {
+    (repository.findOne as jest.Mock).mockResolvedValue(null);
+
+    await expect(service.getSaleById('1')).rejects.toThrow(
+      'Sale with ID 1 not found',
+    );
+
+    expect(repository.findOne).toHaveBeenCalledWith({ where: { id: '1' } });
   });
 
   it('POST SUCCESS CreateSale should return a sale', async () => {

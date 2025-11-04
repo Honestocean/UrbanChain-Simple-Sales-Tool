@@ -43,7 +43,22 @@ describe('SalesController', () => {
     expect(result).toEqual(expectedResult);
   });
 
-  it('POST SUCCESS CreateSale should return a sale', async () => {
+  it('GET SUCCESS getSaleById should return a sale', async () => {
+    const expectedResult: Sale = {
+      id: '1',
+      createdDate: new Date().toUTCString(),
+      ...createSaleDto,
+    };
+
+    service.getSaleById = jest.fn().mockResolvedValue(expectedResult);
+
+    const result = await controller.getTaskById('1');
+
+    expect(service.getSaleById).toHaveBeenCalledWith('1');
+    expect(result).toEqual(expectedResult);
+  });
+
+  it('POST SUCCESS CreateSale should return a sale on succesful creation', async () => {
     const expectedResult: Sale = {
       id: '1',
       createdDate: new Date().toUTCString(),
