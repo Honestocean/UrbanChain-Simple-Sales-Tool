@@ -1,5 +1,5 @@
+import { useSales } from "../../hooks/useSales";
 import { SaleCard, SalesHeader } from "./components";
-import { useSales } from "./hooks";
 
 export interface ISalesProps {}
 

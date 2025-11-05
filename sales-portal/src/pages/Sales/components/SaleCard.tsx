@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import type { Sale } from "../types";
 import { getStatusBadge } from "./GetStatusBadge";
 import { ViewSaleButton } from "./ViewSaleButton";
@@ -7,6 +8,12 @@ export interface ISaleCardProps {
 }
 
 export function SaleCard({ sale }: ISaleCardProps) {
+  const navigate = useNavigate();
+
+  const handleViewSale = () => {
+    navigate(`/edit-sale/${sale.id}`);
+  };
+
   return (
     <div
       key={sale.id}
@@ -49,6 +56,7 @@ export function SaleCard({ sale }: ISaleCardProps) {
             <div className="flex items-center">
               <ViewSaleButton
                 customerName={sale.customerName}
+                onClick={handleViewSale}
               />
             </div>
           </div>
