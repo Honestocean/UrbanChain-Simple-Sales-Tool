@@ -1,11 +1,24 @@
+import {
+  BrowserRouter,
+  Route,
+  Routes,
+} from "react-router-dom";
+import { CreateSale } from "./pages/CreateSale";
+import Login from "./pages/Login/Login";
 import { Sales } from "./pages/Sales/Sales";
 
 function App() {
   return (
-    <main>
-      <h1 className="text-3xl">Sales Portal</h1>
-      <Sales />
-    </main>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="/sales" element={<Sales />} />
+        <Route
+          path="/create-sale"
+          element={<CreateSale />}
+        />
+      </Routes>
+    </BrowserRouter>
   );
 }
 

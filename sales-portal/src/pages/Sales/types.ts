@@ -5,7 +5,17 @@ export type Sale = {
   mpans: string[];
   contractStartDate: string;
   contractEndDate: string;
-  status: string;
+  status: SaleStatus;
   id: string;
-  createdOn: string;
+  createdDate: Date;
 };
+
+export const SaleStatus = {
+  ACTIVE: "active",
+  INACTIVE: "inactive",
+  COMPLETED: "completed",
+  CANCELLED: "cancelled",
+} as const;
+
+export type SaleStatus =
+  (typeof SaleStatus)[keyof typeof SaleStatus];
