@@ -46,6 +46,8 @@ yarn start:dev
 
 The API will run on `http://localhost:3000`
 
+Go to http://localhost:3000/api to see swagger docs
+
 ### 2. Frontend (Sales Portal)
 
 ```bash
